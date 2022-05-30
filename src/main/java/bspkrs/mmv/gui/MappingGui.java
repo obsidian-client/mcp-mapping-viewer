@@ -88,7 +88,7 @@ import immibis.bon.IProgressListener;
 
 public class MappingGui extends JFrame
 {
-    public static final String                  VERSION_NUMBER        = "1.0.1";
+    public static final String                  VERSION_NUMBER        = "1.0.3";
     private static final long                   serialVersionUID      = 1L;
     private final Preferences                   prefs                 = Preferences.userNodeForPackage(MappingGui.class);
     private JFrame                              frmMcpMappingViewer;
@@ -120,8 +120,8 @@ public class MappingGui extends JFrame
     private final VersionFetcher                versionFetcher        = new VersionFetcher();
     private McpMappingLoader                    currentLoader;
     private AppVersionChecker                   versionChecker;
-    private final String                        versionURL            = "http://bspk.rs/Minecraft/MMV/MMV.version";
-    private final String                        mcfTopic              = "http://www.minecraftforum.net/topic/2115030-";
+    private final String                        versionURL            = "https://raw.githubusercontent.com/obsidian-client/mcp-mapping-viewer/master/latest-version.txt";
+    private final String                        updateURL             = "https://github.com/obsidian-client/mcp-mapping-viewer/releases";
 
     // @formatter:off
     public static DefaultTableModel classesDefaultModel = new DefaultTableModel(new Object[][] { {}, }, new String[] { "Pkg name", "SRG name", "Obf name" })
@@ -279,10 +279,9 @@ public class MappingGui extends JFrame
 
     private void checkForUpdates()
     {
-        versionChecker = new AppVersionChecker("MCP Mapping Viewer", VERSION_NUMBER, versionURL, mcfTopic,
+        versionChecker = new AppVersionChecker("MCP Mapping Viewer", VERSION_NUMBER, versionURL, updateURL,
                 new String[] { "{appName} {oldVer} is out of date! Visit {updateURL} to download the latest release ({newVer})." },
-                new String[] {
-                        "{appName} {oldVer} is out of date! <br/><br/>Download the latest release ({newVer}) from <a href=\"{updateURL}\">{updateURL}</a>." },
+                new String[] { "{appName} {oldVer} is out of date! <br/><br/>Download the latest release ({newVer}) from <a href=\"{updateURL}\">{updateURL}</a>." },
                 5000);
         if (!versionChecker.isCurrentVersion())
         {
@@ -655,17 +654,17 @@ public class MappingGui extends JFrame
                 String message = "<center><img src=\"" + imgsrc + "\"/><br/>" +
                         "MCP Mapping Viewer v" + VERSION_NUMBER + "<br/>" +
                         "Copyright (C) 2013-" + year + " bspkrs<br/>" +
-                        "Portions Copyright (C) 2013 Alex \"immibis\" Campbell<br/><br/>" +
-                        "Author: bspkrs<br/>" +
-                        "Credits: immibis (for <a href=\"https://github.com/immibis/bearded-octo-nemesis\">BON</a> code), " +
+                        "Portions Copyright (C) 2013-2014 Alex \"immibis\" Campbell<br/><br/>" +
+                        "Authors:<br/>" +
+                        "bspkrs<br/><br/>" +
+                        "Credits:<br/>" +
+                        "immibis (for <a href=\"https://github.com/immibis/bearded-octo-nemesis\">BON</a> code)<br/>" +
                         "Searge et al (for <a href=\"http://mcp.ocean-labs.de\">MCP</a>)<br/><br/>" +
-                        "<a href=\"" + mcfTopic + "\">MCF Thread</a><br/>" +
-                        "<a href=\"https://github.com/bspkrs/MCPMappingViewer\">Github Repo</a><br/>" +
-                        "<a href=\"https://github.com/bspkrs/MCPMappingViewer/blob/master/change.log\">Change Log</a><br/>" +
-                        "<a href=\"http://bspk.rs/MC/MCPMappingViewer/index.html\">Binary Downloads</a><br/>" +
-                        "<a href=\"https://raw.githubusercontent.com/bspkrs/MCPMappingViewer/master/LICENSE\">License</a><br/>" +
-                        "<a href=\"https://raw.githubusercontent.com/google/gson/master/LICENSE\">GSON License</a><br/>" +
-                        "<a href=\"https://twitter.com/bspkrs\">bspkrs on Twitter</a></center>";
+                        "<a href=\"https://github.com/obsidian-client/mcp-mapping-viewer\">Github Repo</a><br/>" +
+                        "<a href=\"https://github.com/obsidian-client/mcp-mapping-viewer/releases\">Binary Downloads</a><br/>" +
+                        "<a href=\"https://github.com/obsidian-client/mcp-mapping-viewer/blob/master/LICENSE\">License</a><br/>" +
+                        "<a href=\"https://github.com/obsidian-client/mcp-mapping-viewer/blob/master/GSON_LICENSE.txt\">GSON License</a><br/>" +
+                        "<a href=\"https://github.com/obsidian-client/mcp-mapping-viewer/blob/master/BON_LICENSE.txt\">BON License</a><br/>";
                 showHTMLDialog(MappingGui.this, message, "About MCP Mapping Viewer", JOptionPane.PLAIN_MESSAGE);
             }
         });

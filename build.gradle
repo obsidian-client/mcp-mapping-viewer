@@ -3,10 +3,12 @@ plugins {
     id 'java-library'
     id 'eclipse'
     id 'idea'
+    id "maven-publish"
     id 'com.github.johnrengelman.shadow' version '7.0.0'
     id 'edu.sc.seis.launch4j' version '2.5.0'
 }
 
+group 'bspkrs.mmv'
 version = '1.0.3'
 ext.mainClassName = "bspkrs.mmv.gui.MappingGui"
 
@@ -21,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.9.0'
 }
 
 [compileJava, compileTestJava].each { cJava ->
@@ -33,24 +35,36 @@ dependencies {
 
 processResources {
     from 'LICENSE'
+    from 'GSON_LICENSE'
+    from 'BON_LICENSE'
 }
 
 build.dependsOn(shadowJar)
 
 jar {
     destinationDirectory = temporaryDir
+    manifest {
+        attributes([
+                "Main-Class" : mainClassName ,
+                "Specification-Title" : rootProject.name ,
+                "Specification-Version" : project.version ,
+                "Implementation-Title" : rootProject.name ,
+                "Implementation-Version" : project.version ,
+                "Implementation-Timestamp" : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
 }
 
 shadowJar {
     archiveClassifier.set('')
 }
 
-wrapper {
-    distributionType = Wrapper.DistributionType.ALL
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
 }
 
-jar.manifest {
-    attributes 'Main-Class': mainClassName
+wrapper {
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 createExe {
@@ -59,16 +73,29 @@ createExe {
     copyConfigurable = project.tasks.shadowJar.outputs.files
     jar = "lib/${project.tasks.shadowJar.archiveFileName}"
     outputDir = 'libs'
-    outfile = tasks.shadowJar.archiveName - '.jar' + '.exe'
+    outfile = tasks.shadowJar.archiveFileName.get() - '.jar' + '.exe'
     productName = 'MCP Mapping Viewer'
     icon = "${projectDir}/MCPMappingViewer.ico"
-    supportUrl = 'https://www.minecraftforum.net/topic/2115030'
-    copyright = 'Copyright 2013-2021 bspkrs, portions Copyright 2013-2014 Alex "Immibis" Campbell'
+    supportUrl = 'https://github.com/obsidian-client/mcp-mapping-viewer'
+    copyright = 'Copyright 2013-2022 bspkrs, portions Copyright 2013-2014 Alex "Immibis" Campbell'
     version = "${project.version}"
 }
 
 task run(type: JavaExec) {
-  classpath = sourceSets.main.runtimeClasspath
+    classpath = sourceSets.main.runtimeClasspath
+    main = mainClassName
+}
 
-  main = mainClassName
+publishing {
+    publications {
+        MCPMappingViewer(MavenPublication) {
+            artifact jar
+            artifact shadowJar {
+                classifier 'all'
+            }
+            artifact sourceJar {
+                classifier 'sources'
+            }
+        }
+    }
 }
